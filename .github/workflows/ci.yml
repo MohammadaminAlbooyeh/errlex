@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Format check
+        run: ruff format --check .
+
+      - name: Type check
+        run: mypy
+
+      - name: Unit tests
+        run: pytest
+
+      - name: Drift check
+        run: |
+          set -e
+          for target in python java typescript go; do
+            errlex check \
+              --target "$target" \
+              --spec tests/fixtures/sample_spec.py \
+              --out "tests/fixtures/golden/$target"
+          done
+
+      - name: Drift check (example services)
+        run: |
+          set -e
+          errlex check \
+            --target python \
+            --spec examples/payment-service/errors_spec.py \
+            --out examples/payment-service/python-api
+          errlex check \
+            --target java \
+            --spec examples/payment-service/errors_spec.py \
+            --out examples/payment-service/java-payment/src/main/java/com/example/errors

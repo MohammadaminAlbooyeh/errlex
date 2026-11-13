@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "errlex"
+version = "0.1.0"
+description = "Single-source-of-truth error taxonomy generator for polyglot systems."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "errlex contributors" }]
+keywords = ["errors", "codegen", "polyglot", "taxonomy", "drift"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Code Generators",
+    "Typing :: Typed",
+]
+dependencies = ["jinja2>=3.1"]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.10",
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+errlex = "cli.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/errlex/errlex"
+Documentation = "https://github.com/errlex/errlex/tree/main/docs"
+Issues = "https://github.com/errlex/errlex/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/errlex"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"cli" = "cli"
+"templates" = "errlex/templates"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "cli", "templates", "tests", "docs", "examples", "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src", "cli", "tests"]
+mypy_path = "src"
