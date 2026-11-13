@@ -17,6 +17,84 @@ the other side finds out in production.
 `errlex` treats error codes as a contract: one specification, many generated
 artifacts, and a check that fails the build when they drift.
 
+## Architecture
+
+```
+                       +-----------------------------+
+                       |        errors_spec.py        |
+                       |    ErrorSpec + Registry       |
+                       |      (source of truth)        |
+                       +---------------+---------------+
+                                        |
+                                        v
+                       +-----------------------------+
+                       |        errlex.generate        |
+                       |      (Target protocol)        |
+                       +---------------+---------------+
+                                        |
+          +---------------+------------+------------+---------------+
+          |               |                          |               |
+          v               v                          v               v
+   +-------------+ +-------------+           +--------------+ +-------------+
+   |   Python    | |    Java     |           |  TypeScript  | |     Go      |
+   |   target    | |   target    |           |    target    | |   target    |
+   | (Jinja2     | | (Jinja2     |           | (Jinja2      | | (Jinja2     |
+   |  template)  | |  template)  |           |  template)   | |  template)  |
+   +------+------+ +------+------+           +------+-------+ +------+------+
+          |               |                          |               |
+          v               v                          v               v
+     errors.py     *Exception.java              errors.ts        errors.go
+          |               |                          |               |
+          +------+--------+-------------+------------+--------+------+
+                 |                                             |
+                 v                                             v
+   +----------------------------+              +----------------------------+
+   |   committed, native source  |  <---------- |        errlex check       |
+   |   files (per-language repo) |  regenerate   |  (byte-for-byte diff vs.  |
+   |                              |   & compare   |   committed output)      |
+   +------------------------------+             +--------------+-------------+
+                                                                 |
+                                                                 v
+                                                         CI fails on drift
+```
+
+```mermaid
+flowchart TD
+    Spec["errors_spec.py<br/>ErrorSpec + Registry<br/>(source of truth)"]
+    Gen["errlex.generate<br/>Target protocol"]
+
+    subgraph Targets["Language targets (Jinja2 templates)"]
+        Py["Python target"]
+        Java["Java target"]
+        TS["TypeScript target"]
+        Go["Go target"]
+    end
+
+    PyOut["errors.py"]
+    JavaOut["*Exception.java"]
+    TSOut["errors.ts"]
+    GoOut["errors.go"]
+
+    Committed["Committed native\nsource files per language repo"]
+    Check["errlex check\nregenerate in memory + diff"]
+    CI["CI: pass / fail on drift"]
+
+    Spec --> Gen
+    Gen --> Py --> PyOut
+    Gen --> Java --> JavaOut
+    Gen --> TS --> TSOut
+    Gen --> Go --> GoOut
+
+    PyOut --> Committed
+    JavaOut --> Committed
+    TSOut --> Committed
+    GoOut --> Committed
+
+    Committed <-. compare .-> Check
+    Spec --> Check
+    Check --> CI
+```
+
 ## Install
 
 ```bash
@@ -120,5 +198,5 @@ pytest
 
 ## Status
 
-Planned v0.1.0. Python 3.10+, MIT licensed. Initial targets: Python, Java,
-TypeScript, Go.
+Released as [v0.1.0 on PyPI](https://pypi.org/project/errlex/). Python 3.10+,
+MIT licensed. Initial targets: Python, Java, TypeScript, Go.
