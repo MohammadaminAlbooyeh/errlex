@@ -10,9 +10,7 @@ app = FastAPI(title="example payment service")
 
 
 @app.exception_handler(PaymentDeclinedError)
-async def payment_declined_handler(
-    request: Request, exc: PaymentDeclinedError
-) -> JSONResponse:
+async def payment_declined_handler(request: Request, exc: PaymentDeclinedError) -> JSONResponse:
     return JSONResponse(
         status_code=exc.http_status,
         content={

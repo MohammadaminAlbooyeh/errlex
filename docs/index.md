@@ -56,9 +56,11 @@ Exit codes:
 ```python
 from errlex import ErrorSpec, Registry, generate
 
-REGISTRY = Registry([
-    ErrorSpec(code="NOT_FOUND", http_status=404, message="Resource not found."),
-])
+REGISTRY = Registry(
+    [
+        ErrorSpec(code="NOT_FOUND", http_status=404, message="Resource not found."),
+    ]
+)
 
 files = generate(REGISTRY, "typescript")
 assert "errors.ts" in files

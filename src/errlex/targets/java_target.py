@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping, Sequence
+from typing import ClassVar
 
 from errlex.spec import ErrorSpec
 from errlex.targets.base import pascal_case, render_template
@@ -15,7 +16,7 @@ _PACKAGE_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_
 class JavaTarget:
     """Emit one ``*Exception.java`` file per error code."""
 
-    name = "java"
+    name: ClassVar[str] = "java"
 
     def __init__(self, package: str = DEFAULT_PACKAGE) -> None:
         if not _PACKAGE_PATTERN.match(package):

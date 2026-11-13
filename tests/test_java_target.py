@@ -7,20 +7,12 @@ from fixtures.sample_spec import REGISTRY
 
 from errlex.targets import JavaTarget
 
-GOLDEN = (
-    Path(__file__).parent
-    / "fixtures"
-    / "golden"
-    / "java"
-    / "PaymentDeclinedException.java"
-)
+GOLDEN = Path(__file__).parent / "fixtures" / "golden" / "java" / "PaymentDeclinedException.java"
 
 
 def test_java_target_matches_golden() -> None:
     generated = JavaTarget().emit(REGISTRY.specs)
-    assert generated == {
-        "PaymentDeclinedException.java": GOLDEN.read_text(encoding="utf-8")
-    }
+    assert generated == {"PaymentDeclinedException.java": GOLDEN.read_text(encoding="utf-8")}
 
 
 def test_java_target_honours_package_option() -> None:

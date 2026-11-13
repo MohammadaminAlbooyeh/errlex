@@ -33,12 +33,12 @@ class PaymentMethodExpiredError(Exception):
 
 
 class RateLimitedError(Exception):
-    """Too many requests; retry after the period indicated by Retry-After."""
+    """Too many requests; retry after the indicated period."""
 
     code: ClassVar[str] = "RATE_LIMITED"
     http_status: ClassVar[int] = 429
     retryable: ClassVar[bool] = True
-    default_message: ClassVar[str] = "Too many requests; retry after the period indicated by Retry-After."
+    default_message: ClassVar[str] = "Too many requests; retry after the indicated period."
 
     def __init__(self, message: str | None = None) -> None:
         super().__init__(message if message is not None else self.default_message)

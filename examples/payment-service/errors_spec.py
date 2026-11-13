@@ -23,7 +23,7 @@ RATE_LIMITED = ErrorSpec(
     code="RATE_LIMITED",
     http_status=429,
     retryable=True,
-    message="Too many requests; retry after the period indicated by Retry-After.",
+    message="Too many requests; retry after the indicated period.",
 )
 
 REFUND_FAILED = ErrorSpec(

@@ -10,8 +10,7 @@ template, register the target, and pin its output with a golden file.
 class Target(Protocol):
     name: ClassVar[str]
 
-    def emit(self, specs: Sequence[ErrorSpec]) -> Mapping[str, str]:
-        ...
+    def emit(self, specs: Sequence[ErrorSpec]) -> Mapping[str, str]: ...
 ```
 
 `emit` returns a mapping of relative file paths to file contents. A target may

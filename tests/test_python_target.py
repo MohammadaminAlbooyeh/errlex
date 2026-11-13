@@ -27,7 +27,7 @@ def test_generated_python_is_executable() -> None:
     errors = namespace["ERRORS"]
     assert isinstance(errors, dict)
     error_class = errors["PAYMENT_DECLINED"]
-    instance = error_class()  # type: ignore[operator]
+    instance = error_class()
 
     assert instance.code == "PAYMENT_DECLINED"
     assert instance.http_status == 402

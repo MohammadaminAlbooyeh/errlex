@@ -7,7 +7,7 @@ public final class RateLimitedException extends RuntimeException {
     public static final boolean RETRYABLE = true;
 
     public RateLimitedException() {
-        super("Too many requests; retry after the period indicated by Retry-After.");
+        super("Too many requests; retry after the indicated period.");
     }
 
     public RateLimitedException(String message) {
